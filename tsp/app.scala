@@ -64,8 +64,33 @@ object Hi {
         var unvisited = (0 to N-1).toSet - start
         val res = start :: (nn_path2(coord, start, unvisited) :+ start)
         (res.reverse, pathLength(coord, res))
-
     }
+
+    // another take
+    def nn_path_recursive_v2(coord: Vector[(Int,Int)], start: Int) = {
+        // this function does all the real work
+        def nn_path2(coord: Vector[(Int,Int)], section: List[Int], unvisited: Set[Int]): List[Int] = {
+            //we have unvisited cities
+            if(unvisited.size>0) {
+                // so lets calculate the distances to them
+                val start = section.head
+                val dists = for(x<-unvisited) yield (x, dist(coord(start), coord(x)))
+                // take the min
+                val new_elem = dists.minBy(x => x._2)
+                // and recursivley go again
+                nn_path2(coord, new_elem._1 :: section, unvisited - new_elem._1)
+            }
+            // we have finished everything => stop (return Nil)
+            else section
+        }
+        //this part does just the boilerplate
+        val N = coord.length
+        var unvisited = (0 to N-1).toSet - start
+        val res = nn_path2(coord, List(start), unvisited)
+        (start::res, pathLength(coord, start::res))
+    }
+
+
 
 
     def main(args: Array[String]) {
@@ -96,5 +121,7 @@ object Hi {
         println(nn_path(city_coords, 0))
 
         println(nn_path_recursive(city_coords, 0))
+
+        println(nn_path_recursive_v2(city_coords, 0))
   }
 } 
