@@ -5,7 +5,8 @@ object Hi {
 
         //ListStuff.runit
         //Chap02.runit
-        CaseClasses.runit
+        //CaseClasses.runit
+        Chap04.runit()
 
     }
 } 
