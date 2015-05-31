@@ -1,33 +1,40 @@
 object chap03c {
 	
-	// this is the map which holds already calculated stirling numbers
-	val history = scala.collection.mutable.Map[(Int, Int), Int]()
-	// debug variable to count the number of calls
-	//var calls: Int = 0
-
+	
 	// the public interface method
-	def StirlingSecond(n: Int, k: Int): Int = {
+	def StirlingSecond(n: Int, k: Int) = {
 
-		// perform a look-up for the (n,k) pair; if not in the map, start calculating
-		history.getOrElseUpdate((n,k), StirlingSecondInt(n, k))
-		//StirlingSecondInt(n, k)
+		// this is the map which holds already calculated stirling numbers
+		val history = scala.collection.mutable.Map[(Int, Int), Int]()
+		// debug variable to count the number of calls
+		var calls: Int = 0
 
-	}
 
-	// the function doing the real work
-	def StirlingSecondInt(n: Int, k: Int): Int = {
-		//println("Called with:", n, k)
-		//calls = calls + 1
-		// based on a pattern match, calculate the stirling numbers according
-		// to the "textbook definition"
-		(n,k) match {
-			case (0,0) => 1
-			case (n,1) => 1
-			case (m,n) if m == n => 1
-			case (n,k) => StirlingSecond(n-1,k-1) + k*StirlingSecond(n-1,k)
-			case _ => error("not implemented")
+		// the function doing the real work
+		def StirlingSecondCalc(n: Int, k: Int): Int = {
+			calls = calls + 1
+			// based on a pattern match, calculate the stirling numbers according
+			// to the "textbook definition"
+			(n,k) match {
+				case (0,0) => 1
+				case (n,1) => 1
+				case (m,n) if m == n => 1
+				case (n,k) => StirlingSecondInt(n-1,k-1) + k*StirlingSecondInt(n-1,k)
+				case _ => error("not implemented")
+			}
 		}
+
+		// the function which performs the memoization
+		def StirlingSecondInt(n: Int, k: Int): Int = {
+			// perform a look-up for the (n,k) pair; if not in the map, start calculating
+			//history.getOrElseUpdate((n,k), StirlingSecondCalc(n, k))
+			StirlingSecondCalc(n, k)
+		}
+
+		(StirlingSecondInt(n,k), calls, history)
+
 	}
+
 
 
 	def FibonacciV1(n: Int): Int = {
@@ -58,8 +65,7 @@ object chap03c {
 				//FibonacciCalc(n)
 		}
 	
-	(FibonacciInt(n), calls, historyFib)
-
+		(FibonacciInt(n), calls, historyFib)
 	}
 
 
@@ -78,15 +84,14 @@ object chap03c {
 
 		println(history)
 */
-		//println(StirlingSecond(10,5))
+		println(StirlingSecond(10,5))
 		
-
+/*
 		for(i <- 1 to 10) {
 			println(FibonacciV1(i))
-
 			var x = FibonacciV2(i)
 			println("Argument: " + i + " => Result: " + x)
 		}
+*/
 	}
-
 }
