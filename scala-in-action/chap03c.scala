@@ -68,6 +68,23 @@ object chap03c {
 		(FibonacciInt(n), calls, historyFib)
 	}
 
+	// same principle, but more compact
+	def FibonacciV3(n: Int) = {
+		val historyFib = scala.collection.mutable.Map[Int, Int]()
+
+		def FibonacciInt(n: Int): Int = {
+				//the getorupdate method contains the calculation function ->
+				//one function less...
+				historyFib.getOrElseUpdate(n, 
+					n match {
+						case 1 => 1
+						case 2 => 1
+						case _ => FibonacciInt(n-1) + FibonacciInt(n-2)
+					})
+		}
+	
+		(FibonacciInt(n), historyFib)	
+	}
 
 
 
@@ -86,12 +103,13 @@ object chap03c {
 */
 		println(StirlingSecond(10,5))
 		
-/*
+
 		for(i <- 1 to 10) {
 			println(FibonacciV1(i))
+			println(FibonacciV3(i))
 			var x = FibonacciV2(i)
 			println("Argument: " + i + " => Result: " + x)
 		}
-*/
+
 	}
 }
