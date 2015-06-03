@@ -45,7 +45,8 @@ object ListStuff {
       lold match {
         case Nil => lnew.reverse
         // for (currently) unknown reasons, this does not work...
-        case x::xs => _myMap2(xs, func(x) :: lnew)
+        //case x::xs => _myMap2(xs, func(x) :: lnew)
+        case x::xs => _myMap2(xs, x :: lnew)
       }
     }
     _myMap2(l, Nil)
@@ -75,6 +76,18 @@ object ListStuff {
     }
   }
 
+  def mySum2(l: List[Int]):Int = {
+    @annotation.tailrec
+    def _mySum2(l: List[Int], partialsum: Int): Int = {
+      l match {
+        case Nil => partialsum
+        case x::xs => _mySum2(xs, x + partialsum)
+      }
+    }
+    _mySum2(l, 0)
+  }
+
+
   def myDoubleMatch(l: List[Int]): Int = {
     l match {
       case List(x,y) => x
@@ -96,6 +109,7 @@ object ListStuff {
     println(myDrop(l1, 2))
     println(myAt(l1, 2))
     println(mySum(l1))
+    println(mySum2(l1))
     
     println(l1.zipWithIndex)
     
