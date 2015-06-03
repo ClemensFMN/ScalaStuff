@@ -32,7 +32,6 @@ object ListStuff {
     _myLength2(l, 0)
   }
 
-
   def myMap[T](func: T=>T, l: List[T]): List[T] = {
     l match {
       case Nil => Nil
@@ -40,18 +39,16 @@ object ListStuff {
     }
   }
 
-  def myMap2[T](func: T=>T, l: List[T]): List[T] = {
-    def _myMap2[T](lold: List[T], lnew: List[T]): List[T] = {
+  def myMap2[T](func: T=>T, l: List[T]):List[T] = {
+    @annotation.tailrec
+    def _myMap2(lold: List[T], lnew: List[T]): List[T] = {
       lold match {
         case Nil => lnew.reverse
-        // for (currently) unknown reasons, this does not work...
-        //case x::xs => _myMap2(xs, func(x) :: lnew)
-        case x::xs => _myMap2(xs, x :: lnew)
+        case x::xs => _myMap2(xs, func(x)::lnew)
       }
     }
     _myMap2(l, Nil)
   }
-
 
   @annotation.tailrec
   def myDrop[T](l: List[T], pos: Int): List[T] = {
@@ -105,7 +102,8 @@ object ListStuff {
     println(myLength(l1))
     println(myLength2(l1))
     println(myMap( (x:Int)=>2*x, l1))
-    println(myMap2( (x:Int)=>x, l1))
+    println(myMap2( (x:Int)=>2*x, l1))
+
     println(myDrop(l1, 2))
     println(myAt(l1, 2))
     println(mySum(l1))
@@ -116,5 +114,6 @@ object ListStuff {
     println(myDoubleMatch(List(2,3)))
     println(myDoubleMatch(List(2,3,4)))
     println(myDoubleMatch(List(2,3,4,5)))
+
   }
 }
