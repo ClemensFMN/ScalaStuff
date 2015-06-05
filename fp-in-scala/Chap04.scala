@@ -61,22 +61,28 @@ object Chap04 {
 		println
 
 		// here we start with function chaining: we want to take the result
-		// from funnyFunc, multiply it by 2, and add 1: funnyFunc -> f1 -> f2
-		// f1 and f2 themselves do not know about MyOption types; they can
-		// only deal with Ints.
+		// from funnyFunc, multiply it by 2, and add 1. f1 and f2 themselves
+		// do not know about MyOption types; they can only deal with Ints.
+
 		def f1(x:Int):Int = 2*x
 		def f2(x:Int):Int = x+1
 
-		// option 1 is to use myMap, which accepts a function dealing with Ints
-		// (and not MyOptions) and apply it via myMap, wich knows how to deal
-		// with MyOptions.
+		// If funnyFunc were to return Int, we could write f2(f1(funnyFunc)).
+		// But it doesn't, and returns MyOption instead. So f1 and f2 need to
+		// deal with arguments of type MyOption.
+
+		// option 1 is to use myMap, which accepts a function dealing with
+		// Ints (and not MyOptions) and apply it via myMap, wich knows how to
+		// deal with MyOptions.
 		println(funnyFunc(0).myMap(f1).myMap(f2))
 		println(funnyFunc(1).myMap(f1).myMap(f2))
 
-		// option 2 is to lift the functions into the MyOption domain
+		// option 2 is to lift the functions into the MyOption domain using
+		// the lift function.
 		val f1_lifted = lift(f1)
 		val f2_lifted = lift(f2)
 		println
+		// then we can chain the lifted functions like we would do wit
 		println(f2_lifted(f1_lifted(funnyFunc(0))))
 		println(f2_lifted(f1_lifted(funnyFunc(1))))
 
