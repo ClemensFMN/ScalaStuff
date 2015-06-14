@@ -5,11 +5,11 @@ object App {
 
         println("Hello World")
         //chap02.runit()
-        //chap03.runit()
+        chap03.runit()
         //chap03a.runit()
         //chap03b.runit()
         //chap03c.runit()
-        chap03d.runit()
+        //chap03d.runit()
         //chap04a.runit()
     }
 } 
