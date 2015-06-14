@@ -1,6 +1,6 @@
 object Chap04 {
 
-	// start of ADT definition -> a triat which every MyOption type provides
+	// start of ADT definition -> a trait which every MyOption type provides
 	trait MyOption[+A] {
 		// the core idea of MyOption: When a MyNone is processed, it still
 		// stays a myNone;  otherwise we apply the function onto the value
@@ -9,11 +9,19 @@ object Chap04 {
     		case MyNone => MyNone
     		case MySome(a) => MySome(f(a))
   		}
+
+  		// monadic compose
+		def >==[B](f: A => MyOption[B]): MyOption[B] = this match {
+			case MyNone => MyNone
+			case MySome(x) => f(x)
+		}
 	}
+
 	// MyOption can actually be (i) a MySome
 	case class MySome[+T](x: T) extends MyOption[T]
 	// or (ii) a MyNone
 	case object MyNone extends MyOption[Nothing]
+
 
 	//we can use the new datatype in some functions to indicate that the
 	//operation is not possible / meaningful
@@ -35,10 +43,10 @@ object Chap04 {
 	def lift[A,B](f: A => B): MyOption[A] => MyOption[B] = _ myMap f
 
 	// some stupid example function which returns MyNone when the argument =
-	// 0; otherwise returns the argument wrapped in MySome
+	// 0; otherwise returns the argument -1 wrapped in MySome
 	def funnyFunc(x: Int): MyOption[Int] = x match {
 		case 0 => MyNone
-		case _ => MySome(x)
+		case _ => MySome(x-1)
 	}
 
 	def runit() = {
@@ -86,6 +94,10 @@ object Chap04 {
 		println(f2_lifted(f1_lifted(funnyFunc(0))))
 		println(f2_lifted(f1_lifted(funnyFunc(1))))
 
+		println()
+		val init = new MySome(2)
+		val result = init >== funnyFunc >== funnyFunc >== funnyFunc
+		println(result)
 
 	}
 }
