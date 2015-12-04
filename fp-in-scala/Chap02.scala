@@ -13,6 +13,13 @@ object Chap02 {
         }
     }
 
+    // this is a function taking one parameter which return a function (from Int to Int)
+    def parametricAdder(p: Int): (Int => Int) = {
+        // the returned function's parameter is x and we add the parameter p to it
+        x => x + p
+    }
+
+
     def runit() = {
     	val f = (x:Int)=>2 * x
         val g = (x:Int)=>x + 1
@@ -21,5 +28,11 @@ object Chap02 {
 
         val l = List(1,2,3)
         println(myFold(l, (x:Int,acc:Int) => x + acc, 0))
+
+        // create one such function
+        val add3 = parametricAdder(3)
+        // and use it
+        println(add3(7))
+
     }
 }
