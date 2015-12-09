@@ -49,10 +49,12 @@ object Palindrome {
 	}
 
 	def runit() = {
-		//println(reverse_int(4))
-		
-		println(reverse_int(1256))
-		println(reverse_int_v2(1256))
+
+		println(reverse_int_to_vec_int(446, List()))
+		println(reverse_int_to_vec_int(120, List()))
+		//println(reverse_int(10))
+		//println(reverse_int(1256))
+		//println(reverse_int_v2(1256))
 
 		//println(isPalindrome(345))
 		//println(isPalindrome(343))
