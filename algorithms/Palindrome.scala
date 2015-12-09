@@ -1,19 +1,24 @@
 object Palindrome {
 	
-
+	// the recursive solution
 	def reverse_int_to_vec_int(x: Int, lst: List[Int]): List[Int] = {
 		x match {
-			case x if x < 10 => x :: lst
-			case _ 			 =>	val new_val = (x - x % 10) / 10
-								val last_digit = x % 10
-								reverse_int_to_vec_int(new_val, last_digit :: lst)
+			case x 
+				if x < 10 => x :: lst 	// we are finished; append the digit and return the list
+			case _        => val new_val = (x - x % 10) / 10	// shift the number right by one position; e.g. 456 => 45
+							 val last_digit = x % 10			// obtain the first digit
+							 reverse_int_to_vec_int(new_val, last_digit :: lst)	// and continue
 		}
 	}
 
 	def reverse_int(x: Int): Int = {
-		reverse_int_to_vec_int(x, List()).reverse.foldLeft(0)((x, acc) => acc + 10*x)
+		// convert the number into a list of digits
+		val temp = reverse_int_to_vec_int(x, List())
+		// reverse the thing and add up the digits
+		temp.reverse.foldLeft(0)((x, acc) => acc + 10*x)
 	}
 
+	// the non-functional solution
 	def reverse_int_v2(x: Int): Int = {
 		var temp = x
 		var lst = List[Int]()
