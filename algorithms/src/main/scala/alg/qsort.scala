@@ -1,3 +1,5 @@
+package alg
+
 object Qsort {
 
 

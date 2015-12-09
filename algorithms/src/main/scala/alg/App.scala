@@ -1,3 +1,5 @@
+package alg
+
 object App {
 
 	def main(args: Array[String]) {
