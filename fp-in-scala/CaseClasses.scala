@@ -45,6 +45,19 @@ object CaseClasses {
 	}
 
 
+	abstract class Expression
+	case class Value(x: Int) extends Expression
+	case class BinOp(op: String, left: Expression, right: Expression) extends Expression
+
+	def evalExp(ex: Expression): Int = {
+		ex match {
+			case Value(x) => x
+			case BinOp("+", l, r) => evalExp(l) + evalExp(r)
+			case BinOp("*", l, r) => evalExp(l) * evalExp(r)
+		}
+	}
+
+
 	def runit() = {
 		simp(c1(3))
 		simp(c2("hello"))
@@ -56,14 +69,13 @@ object CaseClasses {
 		val r = for(i <- items) yield simp2	(i)
 		println(r)
 	
-		val trt1 = Trt
-		println(trt1.calc(4))
-		val trt2 = trt1.SimpleTrt(4)
-		println(trt2.calc(5))
 
 		val t1 = Branch(1, Branch(2, Branch(3, Leaf(4), Leaf(5)), Leaf(6)), Leaf(7))
 		traverseTree(t1)
 		println("Number of leaves: " + countLeves(t1))
+
+		val e1 = BinOp("+", Value(3), BinOp("*", Value(4), Value(5)))
+		println("Result: " + evalExp(e1))
 
 	}
 

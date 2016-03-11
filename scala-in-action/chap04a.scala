@@ -32,5 +32,4 @@ object chap04a {
 		// -> List[String] is a subtype of List[Any]
 		val l2:List[Any] = l1
 	}
-
 }
