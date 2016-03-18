@@ -7,10 +7,13 @@ object App {
         //chap02.runit()
         //chap03.runit()
         //chap03a.runit()
-        chap03b.runit()
+        //chap03b.runit()
         //chap03c.runit()
         //chap03d.runit()
         //chap03e.runit()
         //chap04a.runit()
+        //chap04b.runit()
+        //chap04c.runit()
+        chap05.runit()
     }
 } 
