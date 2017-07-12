@@ -14,7 +14,7 @@ println(l2)
 val l2part = l2.partition(x => x%2==0)
 println(l2part)
 
-val l2group = l2.groupBy(x => x%2==0)
+val l2group = l2.groupBy(x => x%2)
 println(l2group)
 
 // Group elements in fixed size blocks by passing a "sliding window" over them
