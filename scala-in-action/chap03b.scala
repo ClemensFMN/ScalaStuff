@@ -1,10 +1,10 @@
 trait SimpleObj
-case class ObjA extends SimpleObj
-case class ObjB extends SimpleObj
+case class ObjA() extends SimpleObj
+case class ObjB() extends SimpleObj
 
 
 trait SimpleOption
-case class NoOption extends SimpleOption
+case class NoOption() extends SimpleOption
 case class Option1(x: Int) extends SimpleOption
 case class Option2(x: Int, y: Int) extends SimpleOption
 

@@ -1,6 +1,8 @@
+package alg;
+
 import java.util.Random
 
-object Hi {
+object TSP {
 
     // gives all tour of cities starting in start
     def allTours(cities: Vector[Int], start: Int) = {
@@ -93,7 +95,7 @@ object Hi {
 
 
 
-    def main(args: Array[String]) {
+    def runit() = {
 
         // the cities for the problem
         val cities = Vector(0,1,2,3,4)

@@ -20,7 +20,7 @@ object chap03c {
 				case (n,1) => 1
 				case (m,n) if m == n => 1
 				case (n,k) => StirlingSecondInt(n-1,k-1) + k*StirlingSecondInt(n-1,k)
-				case _ => error("not implemented")
+				case _ => sys.error("not implemented")
 			}
 		}
 

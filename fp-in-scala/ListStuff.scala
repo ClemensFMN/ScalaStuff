@@ -2,7 +2,7 @@ object ListStuff {
 
   def myHead[T](l: List[T]): T = {
     l match {
-      case Nil => error("Empty List")
+      case Nil => sys.error("Empty List")
       case x::xs => x
     }
   }
@@ -61,7 +61,7 @@ object ListStuff {
   @annotation.tailrec
   def myAt[T](l: List[T], pos: Int): T = {
     l match {
-      case Nil => error("Empty List")
+      case Nil => sys.error("Empty List")
       case x::xs => if(pos==0) x else myAt(xs, pos-1)
     }
   }
