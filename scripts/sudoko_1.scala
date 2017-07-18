@@ -82,7 +82,8 @@ def posString(s: Set[Int]) = s.toList.sorted.fold("")((s,i) => s+i.toString)
 // print the whole board
 def printBoard(b:Map[(Int,Char), Set[Int]]) = {
   // obtain length of the longest sequence
-  val width = (for(pos<-all) yield b(pos).size).max
+  //val width = (for(pos<-all) yield b(pos).size).max
+  val width = b.values.map(x=>x.size).max
   for(r<-rows) {
     // for every row, make a new string
     var s = ""
@@ -100,8 +101,9 @@ def printBoard(b:Map[(Int,Char), Set[Int]]) = {
 
 // one round of constraint propagation; i.e. we go over all board positions ONCE
 def constProp(b:Map[(Int,Char), Set[Int]]) = {
-  // go over all positions
+  // create an empty map to hold the board after the constraint propagation
   val bnew = Map[(Int,Char), Set[Int]]()
+  // go over all positions
   for(pos<-all) {
     // basic idea is to collect the values from  all neigbours when they have ONE value
     var neighbourValues = Set[Int]()
@@ -117,6 +119,35 @@ def constProp(b:Map[(Int,Char), Set[Int]]) = {
   (bnew, bnew == b)
 }
 
+
+def constPropComplete(b:Map[(Int,Char), Set[Int]]) = {
+  var bnew = b
+  var changed = false
+  while(changed == false) {
+     val res = constProp(bnew)
+     printBoard(res._1)
+     println
+     changed = res._2
+     bnew = res._1
+  }
+  bnew
+}
+
+
+abstract class Result
+case class Solution() extends Result
+case class Ambiguous() extends Result
+case class NotSolvable() extends Result
+
+def isSolution(b:Map[(Int,Char), Set[Int]]) = {
+  // if all positions have length 1 we have a solution
+  if(b.values.size.forall(_==1)) Solution()
+  // if there is at least one position with length 0, the thing is not solvable
+  else if(b.values.size.exists(_==0)) NotSolvable()
+  else Ambiguous()
+
+}
+
 // taken from the article http://norvig.com/sudoku.html
 // also the first entry in http://norvig.com/easy50.txt
 // this sudoku can be completely solved via constraint propagation...
@@ -127,7 +158,12 @@ var b1 = parseStr(brd1)
 printBoard(b1)
 
 println()
-var changed = false
+
+val res = constPropComplete(b1)
+
+printBoard(res)
+
+/*var changed = false
 
 while(changed == false) {
   val bnew = constProp(b1)
@@ -138,3 +174,4 @@ while(changed == false) {
 }
 
 printBoard(b1)
+*/
