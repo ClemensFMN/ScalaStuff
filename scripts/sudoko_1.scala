@@ -63,60 +63,78 @@ for(element <- all) {
 //and we are done; a simple check:
 //println(neighbours(4,'c'))
 
-
-
-
+// parsing a "sudoku string" describing a problem into a Map[(Int,Char), Set[Int]]() structure
 def parseStr(s:String) = {
   val data = all.zip(s)
   //println(data)
   val board = Map[(Int,Char), Set[Int]]()
   for(e <-data) {
-    val value = if(e._2=='.') Set(1,2,3,4,5,6,7,8,9) else Set(e._2.asDigit)
+    val value = if(e._2=='0') Set(1,2,3,4,5,6,7,8,9) else Set(e._2.asDigit)
     //println(e + "..." + value)
     board += e._1 -> value
   }
   board
 }
 
-// not working / incomplete
+// convert the values of one board position into a string
+def posString(s: Set[Int]) = s.toList.sorted.fold("")((s,i) => s+i.toString)
+
+// print the whole board
 def printBoard(b:Map[(Int,Char), Set[Int]]) = {
-  val width = (for(pos<-all) yield b1(pos).size).max
+  // obtain length of the longest sequence
+  val width = (for(pos<-all) yield b(pos).size).max
   for(r<-rows) {
+    // for every row, make a new string
     var s = ""
     for (c<-cols) {
-      s += b((r,c))
+      // append every column's value
+      s += posString (b((r,c)))
+      // and fill with spaces
+      val space = " " * (width - b(r,c).size + 1)
+      s += space
     }
+    // print out the row
     println(s)
   }
 }
 
-// one round of constraint propagation 
+// one round of constraint propagation; i.e. we go over all board positions ONCE
 def constProp(b:Map[(Int,Char), Set[Int]]) = {
-  //val pos = (1,'a')
   // go over all positions
+  val bnew = Map[(Int,Char), Set[Int]]()
   for(pos<-all) {
-    // basic idea is to init a set with the allowed values of the current position
-    // run over all neighbours and remove the neighbour's values from the set
-    var neighbourValues = b(pos) 
-    //println(neighbourValues)
+    // basic idea is to collect the values from  all neigbours when they have ONE value
+    var neighbourValues = Set[Int]()
     for(n<-neighbours(pos)) {
-      // special case: if the neighbour's value is unconstrained, then do not remove
-      if(b(n).size != 9) neighbourValues = neighbourValues -- b(n)
-      //println(n, b(n))
+      // if the neighbour value has length = 1, add this vlaue to the collection
+      if(b(n).size == 1) {
+        neighbourValues = neighbourValues ++ b(n)
+      }
     }
-    //println(neighbourValues)
-    // and update the current position
-    b(pos) = neighbourValues
+    // remove the collected values from the current position's values
+    bnew(pos) = b(pos) -- neighbourValues
   }
-  b
+  (bnew, bnew == b)
 }
 
+// taken from the article http://norvig.com/sudoku.html
+// also the first entry in http://norvig.com/easy50.txt
+// this sudoku can be completely solved via constraint propagation...
+val brd1 = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
 
-val brd1 = "....3..9....2....1.5.9..............1.2.8.4.6.8.5...2..75......4.1..6..3.....4.6." 
 
-val b1 = parseStr(brd1)
-println(b1)
-//printBoard(b1)
+var b1 = parseStr(brd1)
+printBoard(b1)
 
-val bnew = constProp(b1)
-println(bnew)
+println()
+var changed = false
+
+while(changed == false) {
+  val bnew = constProp(b1)
+  printBoard(bnew._1)
+  println
+  b1 = bnew._1
+  changed = bnew._2
+}
+
+printBoard(b1)
