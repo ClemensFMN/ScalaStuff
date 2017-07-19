@@ -141,9 +141,10 @@ case class NotSolvable() extends Result
 
 def isSolution(b:Map[(Int,Char), Set[Int]]) = {
   // if all positions have length 1 we have a solution
-  if(b.values.size.forall(_==1)) Solution()
+  if(b.values.map(_.size).forall(_==1)) Solution()
+
   // if there is at least one position with length 0, the thing is not solvable
-  else if(b.values.size.exists(_==0)) NotSolvable()
+  else if(b.values.map(_.size).exists(_==0)) NotSolvable()
   else Ambiguous()
 
 }
@@ -151,7 +152,11 @@ def isSolution(b:Map[(Int,Char), Set[Int]]) = {
 // taken from the article http://norvig.com/sudoku.html
 // also the first entry in http://norvig.com/easy50.txt
 // this sudoku can be completely solved via constraint propagation...
-val brd1 = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
+//val brd1 = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
+
+// a hard puzzle which can not be solved with CP alone...
+val brd1 = "400000805030000000000700000020000060000080400000010000000603070500200000104000000"
+
 
 
 var b1 = parseStr(brd1)
@@ -162,16 +167,8 @@ println()
 val res = constPropComplete(b1)
 
 printBoard(res)
+println(isSolution(res))
 
-/*var changed = false
 
-while(changed == false) {
-  val bnew = constProp(b1)
-  printBoard(bnew._1)
-  println
-  b1 = bnew._1
-  changed = bnew._2
-}
 
-printBoard(b1)
-*/
+
