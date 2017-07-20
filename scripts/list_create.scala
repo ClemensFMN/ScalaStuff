@@ -42,3 +42,7 @@ println(l5)
 val l6 = l5.filter(_ < 30)
 println(l6)
 
+// duplicate a list's elements
+val l7 = l3.flatMap {e=> List(e,e)}
+println(l7)
+
