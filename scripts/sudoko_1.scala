@@ -116,22 +116,25 @@ def constProp(b:Map[(Int,Char), Set[Int]]) = {
     // remove the collected values from the current position's values
     bnew(pos) = b(pos) -- neighbourValues
   }
-  (bnew, bnew == b)
-}
-
-
-def constPropComplete(b:Map[(Int,Char), Set[Int]]) = {
-  var bnew = b
-  var changed = false
-  while(changed == false) {
-     val res = constProp(bnew)
-     printBoard(res._1)
-     println
-     changed = res._2
-     bnew = res._1
-  }
   bnew
 }
+
+// run several rounds of constraint propagation until the result does not change anymore
+def constPropComplete(b:Map[(Int,Char), Set[Int]]) = {
+  var bnew = b
+  var changed = true
+  while(changed == true) {
+     val res = constProp(bnew)
+     printBoard(res)
+     println
+     changed = bnew != res
+     bnew = res
+  }
+  bnew, isSolution(bnew)
+}
+
+
+
 
 
 abstract class Result
@@ -152,10 +155,10 @@ def isSolution(b:Map[(Int,Char), Set[Int]]) = {
 // taken from the article http://norvig.com/sudoku.html
 // also the first entry in http://norvig.com/easy50.txt
 // this sudoku can be completely solved via constraint propagation...
-//val brd1 = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
+val brd1 = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
 
 // a hard puzzle which can not be solved with CP alone...
-val brd1 = "400000805030000000000700000020000060000080400000010000000603070500200000104000000"
+//val brd1 = "400000805030000000000700000020000060000080400000010000000603070500200000104000000"
 
 
 
@@ -167,7 +170,6 @@ println()
 val res = constPropComplete(b1)
 
 printBoard(res)
-println(isSolution(res))
 
 
 
