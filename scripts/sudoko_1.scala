@@ -119,46 +119,129 @@ def constProp(b:Map[(Int,Char), Set[Int]]) = {
   bnew
 }
 
-// run several rounds of constraint propagation until the result does not change anymore
+// run several rounds of constraint propagation until the result does not 
+// change anymore
+// then we decide whether the resulting board is solved, ambiguous or not 
+// solvable & return this result
 def constPropComplete(b:Map[(Int,Char), Set[Int]]) = {
   var bnew = b
   var changed = true
   while(changed == true) {
      val res = constProp(bnew)
-     printBoard(res)
+     //printBoard(res)
      println
      changed = bnew != res
      bnew = res
   }
-  bnew, isSolution(bnew)
+  (bnew, isSolution(bnew))
 }
 
-
-
-
-
+// the possible results ffrom isSolution
 abstract class Result
 case class Solution() extends Result
 case class Ambiguous() extends Result
 case class NotSolvable() extends Result
 
+// take a board & return one of the Result case classes
 def isSolution(b:Map[(Int,Char), Set[Int]]) = {
   // if all positions have length 1 we have a solution
   if(b.values.map(_.size).forall(_==1)) Solution()
-
   // if there is at least one position with length 0, the thing is not solvable
   else if(b.values.map(_.size).exists(_==0)) NotSolvable()
+  // on all other cases, there is some ambiguity; i.e. at least one field has 
+  // more than one allowed value
   else Ambiguous()
-
 }
+
+
+// that's now the final solve function
+// we take a board and run one round of constraint propagation over it
+// now there are three outcomes
+// 1 Const. Prop. returns Solution -> we return the solution and are done
+// 2 Const. Prop. returns NotSolvable -> we return the board without further 
+// processing
+// 3 Const. Prop. returns Ambiguous -> we select a position with multiple 
+// possibilities, select one possibility and call solveIt with this new board
+def solveIt(b:Map[(Int,Char), Set[Int]]):Map[(Int,Char), Set[Int]] = {
+  //println("Input")
+  //printBoard(b)
+  // run CP
+  val res = constPropComplete(b)
+  val bnew = res._1
+  val solution = res._2
+  var result = bnew
+
+  println("after cp")
+  printBoard(bnew)
+
+  // decide upon CP result
+  solution match {
+    // case 1
+    case Solution() => println("found solution")
+    // case 2
+    case NotSolvable() => {
+      println("got stuck")
+    }
+    // case 3 - fix a value and continue
+    case Ambiguous() => {
+      for(pos <- bnew.keys) {
+        // choose one of the ambiuous positions
+        if(bnew(pos).size > 1) {
+          // store the old position
+          var temp = bnew
+          // fix the value - TODO we need to go over all values of bnew(pos) instead of just fixing to the head
+          // we need another for loop which assigns temp(pos) consecutively a value from bnew(pos)
+          temp(pos) = Set(bnew(pos).head)
+          println("go again @ position: " + pos + ", with new value: " + bnew(pos))
+          // and do it again
+          solveIt(temp)
+          // i'm not sure if we need to do anything here... bnew should not have changed
+          // so we can simply try fixing another position and see what happens
+          // currently, this stops with NO solution
+        }
+      }
+    }
+  }
+  result
+}
+
+  /*
+  if(solution == Solution) {
+    println("found solution")
+  }
+  else if(solution == NotSolvable) {
+    println("got stuck")
+  }
+  else {
+    for(elem <- bnew) {
+      if(bnew(elem._1).size > 1) {
+        bnew(elem._1) = Set(bnew(elem._1).head)
+        println("go again" + bnew(elem._1))
+        solveIt(bnew)
+      }
+    }
+  }
+  */
+//  bnew
+//}
+
+
+
 
 // taken from the article http://norvig.com/sudoku.html
 // also the first entry in http://norvig.com/easy50.txt
 // this sudoku can be completely solved via constraint propagation...
-val brd1 = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
+//val brd1 = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
+
+// not sure about this one
+//val brd1 = "100900000090061000605020100040050030000408760087030005800700500000203070004000601'"
+
 
 // a hard puzzle which can not be solved with CP alone...
-//val brd1 = "400000805030000000000700000020000060000080400000010000000603070500200000104000000"
+val brd1 = "400000805030000000000700000020000060000080400000010000000603070500200000104000000"
+//
+// special case of a board which becomes stuck after one round opf CP - what does isSolution say?
+//val brd1 = "440000805030000000000700000020000060000080400000010000000603070500200000104000000"
 
 
 
@@ -167,10 +250,12 @@ printBoard(b1)
 
 println()
 
-val res = constPropComplete(b1)
-
-printBoard(res)
 
 
+//val res = constPropComplete(b1)
+//printBoard(res._1)
+//println(res._2)
+
+solveIt(b1)
 
 
