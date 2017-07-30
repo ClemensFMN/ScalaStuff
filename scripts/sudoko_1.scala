@@ -171,33 +171,37 @@ def solveIt(b:Map[(Int,Char), Set[Int]]):Map[(Int,Char), Set[Int]] = {
   val solution = res._2
   var result = bnew
 
-  println("after cp")
-  printBoard(bnew)
+  //println("after cp")
+  //printBoard(bnew)
 
   // decide upon CP result
   solution match {
     // case 1
-    case Solution() => println("found solution")
+    case Solution() => {
+      println("found solution")
+      printBoard(bnew)
+    }
     // case 2
     case NotSolvable() => {
-      println("got stuck")
+      //println("got stuck")
     }
     // case 3 - fix a value and continue
     case Ambiguous() => {
       for(pos <- bnew.keys) {
-        // choose one of the ambiuous positions
+        // choose one of the ambiguous positions
         if(bnew(pos).size > 1) {
-          // store the old position
-          var temp = bnew
-          // fix the value - TODO we need to go over all values of bnew(pos) instead of just fixing to the head
-          // we need another for loop which assigns temp(pos) consecutively a value from bnew(pos)
-          temp(pos) = Set(bnew(pos).head)
-          println("go again @ position: " + pos + ", with new value: " + bnew(pos))
-          // and do it again
-          solveIt(temp)
+          // fix the value
+          // we assign temp(pos) consecutively a value from bnew(pos)
+          //temp(pos) = Set(bnew(pos).head)
+          for(cand <- bnew(pos)) {
+            // store the old position
+            var temp = bnew
+            temp(pos) = Set(cand)
+            //println("go again @ position: " + pos + ", with new value: " + temp(pos))
+            // and do it again
+            solveIt(temp)
+          }
           // i'm not sure if we need to do anything here... bnew should not have changed
-          // so we can simply try fixing another position and see what happens
-          // currently, this stops with NO solution
         }
       }
     }
@@ -232,13 +236,15 @@ def solveIt(b:Map[(Int,Char), Set[Int]]):Map[(Int,Char), Set[Int]] = {
 // also the first entry in http://norvig.com/easy50.txt
 // this sudoku can be completely solved via constraint propagation...
 //val brd1 = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
+//slighlty more DOFs -> not solvable via CP alone
+val brd1 = "000000000900305001001806400008102900700000008006708200002609500800203009005010300"
 
 // not sure about this one
 //val brd1 = "100900000090061000605020100040050030000408760087030005800700500000203070004000601'"
 
 
 // a hard puzzle which can not be solved with CP alone...
-val brd1 = "400000805030000000000700000020000060000080400000010000000603070500200000104000000"
+//val brd1 = "400000805030000000000700000020000060000080400000010000000603070500200000104000000"
 //
 // special case of a board which becomes stuck after one round opf CP - what does isSolution say?
 //val brd1 = "440000805030000000000700000020000060000080400000010000000603070500200000104000000"
