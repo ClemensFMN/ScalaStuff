@@ -152,76 +152,59 @@ def isSolution(b:Map[(Int,Char), Set[Int]]) = {
   else Ambiguous()
 }
 
+// the global variable holding information whether we are finished or not
+var finished = false
+
 // that's now the final solve function
 // we take a board and run one round of constraint propagation over it
 // now there are three outcomes
-// 1 Const. Prop. returns Solution -> we print the solution and continue
+// 1 Const. Prop. returns Solution -> we print the solution and set 
+// finished = true
 // 2 Const. Prop. returns NotSolvable -> we return immediately
 // 3 Const. Prop. returns Ambiguous -> we continue fixing ambiguous board 
 // positions and start all over again
 def solveIt(b:Map[(Int,Char), Set[Int]]):Unit = {
-  //println("Input")
-  //printBoard(b)
   // run CP
   val res = constPropComplete(b)
   val bnew = res._1
   val solution = res._2
   var result = bnew
 
-  //println("after cp")
-  //printBoard(bnew)
-
-  // decide upon CP result
-  solution match {
-    // case 1
-    case Solution() => {
-      println("found solution")
-      printBoard(bnew)
-    }
-    // case 2
-    case NotSolvable() => {
+  if(!finished) { // we do the whole thing only when NOT finished
+    // decide upon CP result
+    solution match {
+      // case 1
+      case Solution() => {
+        println("found solution")
+        printBoard(bnew)
+        finished = true
+      }
+      // case 2
+      case NotSolvable() => {
       //println("got stuck")
-    }
-    // case 3
-    case Ambiguous() => {
-      for(pos <- bnew.keys) {
-        // choose one of the ambiguous positions
-        if(bnew(pos).size > 1) {
-          // fix the value
-          // we assign temp(pos) consecutively a value from bnew(pos)
-          for(cand <- bnew(pos)) {
-            // store the old position
-            var temp = bnew
-            temp(pos) = Set(cand)
-            //println("go again @ position: " + pos + ", with new value: " + temp(pos))
-            // and do it again
-            solveIt(temp)
+      }
+      // case 3
+      case Ambiguous() => {
+        for(pos <- bnew.keys) {
+          // choose one of the ambiguous positions
+          if(bnew(pos).size > 1) {
+            // fix the value
+            // we assign temp(pos) consecutively a value from bnew(pos) if we 
+            // are NOT finished
+            for(cand <- bnew(pos) if !finished) {
+              // store the old position
+              var temp = bnew
+              temp(pos) = Set(cand)
+              //println("go again @ position: " + pos + ", with new value: " + temp(pos))
+              // and do it again
+              solveIt(temp)
+            }
           }
         }
       }
     }
   }
 }
-
-  /*
-  if(solution == Solution) {
-    println("found solution")
-  }
-  else if(solution == NotSolvable) {
-    println("got stuck")
-  }
-  else {
-    for(elem <- bnew) {
-      if(bnew(elem._1).size > 1) {
-        bnew(elem._1) = Set(bnew(elem._1).head)
-        println("go again" + bnew(elem._1))
-        solveIt(bnew)
-      }
-    }
-  }
-  */
-//  bnew
-//}
 
 
 
