@@ -16,17 +16,16 @@ val all = cross(rows, cols)
 // same row and column and all positions in one of the 3x3 subboard
 
 // let's create these 3x3 subboards first
-val n1 = rows.sliding(3,3).toList
-val n2 = cols.sliding(3,3).toList
+val n1 = rows.grouped(3).toList
+val n2 = cols.grouped(3).toList
 
 // obtaining the 3x3 groups
 val groups = for(x<-n1;y<-n2) yield cross(x,y)
 
-// "almost" the final thing; only difference is that it maps onto a list 
-val intermed = Map[(Int,Char), List[(Int,Char)]]()
+// the type of the neighbours map
+val neighbours = Map[(Int,Char), Set[(Int,Char)]]()
 
-// fill up the map
-// go through all elements
+// fill up the map: go through all elements
 for(element <- all) {
   // and all groups
   for(g<-groups) {
@@ -37,31 +36,16 @@ for(element <- all) {
       val rowAdd = all.filter(x=>x._1 == element._1)
       // and the element from the same column
       val colAdd = all.filter(x=>x._2 == element._2)
-      // and throw it all in a list
-      intermed += (element -> (g ++ rowAdd ++ colAdd))
+      // and throw it all in a list, convert to a set (= remove duplicates)
+      val temp = (g ++ rowAdd ++ colAdd).toSet
+      // remove the element itself & we are done
+      neighbours += (element -> (temp - element))
     }
   }
 }
 
 //println(neighbours)
-//println(neighbours((4,'c')))
-
-// so far, so good, but: (i) we have duplicated positions & (ii) the element 
-// itself is contained in the list as well
-// so we use a set -> this gets rid of the duplicates
-val neighbours = Map[(Int,Char), Set[(Int,Char)]]()
-
-for(element <- all) {
-  // get the list
-  val temp = intermed(element)
-  // convert to set -> this removes duplicates
-  val s1 = temp.toSet
-  // remove the element from the set & assign to the final neighbour map
-  neighbours += (element -> (s1 - element))
-}
-
-//and we are done; a simple check:
-//println(neighbours(4,'c'))
+println(neighbours((4,'c')))
 
 // parsing a "sudoku string" describing a problem into a Map[(Int,Char), Set[Int]]() structure
 def parseStr(s:String) = {
@@ -82,7 +66,6 @@ def posString(s: Set[Int]) = s.toList.sorted.fold("")((s,i) => s+i.toString)
 // print the whole board
 def printBoard(b:Map[(Int,Char), Set[Int]]) = {
   // obtain length of the longest sequence
-  //val width = (for(pos<-all) yield b(pos).size).max
   val width = b.values.map(x=>x.size).max
   for(r<-rows) {
     // for every row, make a new string
@@ -105,13 +88,10 @@ def constProp(b:Map[(Int,Char), Set[Int]]) = {
   val bnew = Map[(Int,Char), Set[Int]]()
   // go over all positions
   for(pos<-all) {
-    // basic idea is to collect the values from  all neigbours when they have ONE value
+    // basic idea is to collect the values from all neigbours when they have ONE value
     var neighbourValues = Set[Int]()
-    for(n<-neighbours(pos)) {
-      // if the neighbour value has length = 1, add this vlaue to the collection
-      if(b(n).size == 1) {
+    for(n<-neighbours(pos) if b(n).size==1) {
         neighbourValues = neighbourValues ++ b(n)
-      }
     }
     // remove the collected values from the current position's values
     bnew(pos) = b(pos) -- neighbourValues
@@ -135,7 +115,7 @@ def constPropComplete(b:Map[(Int,Char), Set[Int]]) = {
   (bnew, isSolution(bnew))
 }
 
-// the possible results ffrom isSolution
+// the possible results from isSolution
 abstract class Result
 case class Solution() extends Result
 case class Ambiguous() extends Result
@@ -165,9 +145,7 @@ var finished = false
 // positions and start all over again
 def solveIt(b:Map[(Int,Char), Set[Int]]):Unit = {
   // run CP
-  val res = constPropComplete(b)
-  val bnew = res._1
-  val solution = res._2
+  val (bnew, solution) = constPropComplete(b)
   var result = bnew
 
   if(!finished) { // we do the whole thing only when NOT finished
