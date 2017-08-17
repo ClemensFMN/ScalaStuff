@@ -4,8 +4,8 @@ import scala.collection.mutable.Map
 def cross(l1:List[Int], l2:List[Char]) = for(x<-l1;y<-l2) yield(x,y)
 
 
-val rows = List(1,2,3,4,5,6,7,8,9)
-val cols = List('a','b','c','d','e','f','g','h','i')
+val rows = (1 to 9).toList
+val cols = ('a' to 'i').toList
 
 // all 9x9 = 81 positions on the sudoku board
 val all = cross(rows, cols)
