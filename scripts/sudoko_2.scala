@@ -1,8 +1,12 @@
 import scala.collection.mutable.Map
 
+// solving every sudoko (based on http://norvig.com/sudoku.html)
+// this program supports two modes:
+// - listing all solutions
+// - stoppping after having found the first solution
+
 // obtaining the "cross product" of two lists
 def cross(l1:List[Int], l2:List[Char]) = for(x<-l1;y<-l2) yield(x,y)
-
 
 val rows = (1 to 9).toList
 val cols = ('a' to 'i').toList
@@ -138,7 +142,7 @@ var finished = false
 // that's now the final solve function
 // we take a board and run one round of constraint propagation over it
 // now there are three outcomes
-// 1 Const. Prop. returns Solution -> we print the solution and set 
+// 1 Const. Prop. returns Solution -> we print the solution If we want to stop, then we set 
 // finished = true
 // 2 Const. Prop. returns NotSolvable -> we return immediately
 // 3 Const. Prop. returns Ambiguous -> we continue fixing ambiguous board 
@@ -155,6 +159,8 @@ def solveIt(b:Map[(Int,Char), Set[Int]]):Unit = {
       case Solution() => {
         println("found solution")
         printBoard(bnew)
+        // comment the following line to continue searching after having found 
+        // a solution
         finished = true
       }
       // case 2
@@ -184,9 +190,6 @@ def solveIt(b:Map[(Int,Char), Set[Int]]):Unit = {
   }
 }
 
-
-
-
 // taken from the article http://norvig.com/sudoku.html
 // also the first entry in http://norvig.com/easy50.txt
 // this sudoku can be completely solved via constraint propagation...
@@ -210,12 +213,6 @@ var b1 = parseStr(brd1)
 printBoard(b1)
 
 println()
-
-
-
-//val res = constPropComplete(b1)
-//printBoard(res._1)
-//println(res._2)
 
 solveIt(b1)
 
