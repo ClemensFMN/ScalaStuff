@@ -1,6 +1,6 @@
-
-
+// an example to represent tree structures via ADTs
 abstract class TreeStuff
+// TODO replace with generic type instead of int
 case class Node(value:Int) extends TreeStuff
 case class Branch(value:Int, l:TreeStuff, r:TreeStuff) extends TreeStuff
 
