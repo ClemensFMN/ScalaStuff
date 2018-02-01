@@ -46,3 +46,5 @@ println(l6)
 val l7 = l3.flatMap {e=> List(e,e)}
 println(l7)
 
+val l8 = l7.sliding(3,2)
+l8.foreach(println)
