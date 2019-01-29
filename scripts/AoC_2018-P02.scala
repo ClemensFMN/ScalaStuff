@@ -37,9 +37,10 @@ def countLetters(s:String):Map[Char, Int] = {
 
 //println(countLetters("bababc")) // Map(b -> 3, a -> 2, c -> 1)
 
-
+// check whether one or more letters appears twice. Note that this is does not depend on how many letters appear twice; i.e. AABCDEF and AABBCD are both true 
 def containsTwoSameLetters(lst:Iterable[Int]):Boolean = lst.count(_ == 2) > 0
 
+// check whether one or more letters appears three times
 def containsThreeSameLetters(lst:Iterable[Int]):Boolean = lst.count(_ == 3) > 0
 
 
@@ -47,7 +48,7 @@ def containsThreeSameLetters(lst:Iterable[Int]):Boolean = lst.count(_ == 3) > 0
 //println(containsThreeSameLetters(countLetters("bababc").values))
 
 
-// take a list of stings and count how often two same letters appear
+// take a list of strings and count how often two same letters appear
 def cntTwoSame(inp:List[String]):Int = {
   inp.map(countLetters) // count letters per string
      .map(_.values)     // get the counts
