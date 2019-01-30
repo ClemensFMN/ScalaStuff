@@ -77,6 +77,7 @@ println( processClaimLine(s, clmMap))
 val lines = """#123 @ 3,2:5x4
 #124 @ 4,3:1x1
 #125 @ 10,10:1x1
+#126 @ 5,4:1x1
 """
 
 // use a fold to update the claim map based on line-wise input
@@ -84,3 +85,7 @@ var res = lines.lines.foldLeft(Map[(Int,Int),List[String]]()) {
   (acc,i) => // acc contains the map updated so far, i contains the current claim line
   processClaimLine(i, acc)
 }
+
+// how many fields are claimed by more than one?
+val numMoreOne = res.values.map(_.size).count(_>1)
+
